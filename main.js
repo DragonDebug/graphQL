@@ -5,7 +5,7 @@ import { createSVGProgressBar, formatBytes, createXPBarChart, createProjectsSVG 
 // ── Auth Guard ──
 
 if (!localStorage.getItem("authToken")) {
-  window.location.href = "login.html";
+  window.location.href = "index.html";
 }
 
 // ── Init ──
@@ -22,7 +22,7 @@ async function loadUserProfile() {
 
   if (!user?.id) {
     localStorage.removeItem("authToken");
-    window.location.href = "login.html";
+    window.location.href = "index.html";
     throw new Error("User not authenticated");
   }
 
@@ -115,6 +115,6 @@ function setupProjectTabs(projectsByCategory) {
 function setupSignout() {
   document.getElementById("signout").addEventListener("click", () => {
     localStorage.removeItem(config.authTokenKey);
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   });
 }
