@@ -1,11 +1,26 @@
 import * as api from "./api.js";
 import { config } from "./config.js";
-import { createSVGProgressBar, formatBytes, createXPBarChart, createProjectsSVG } from "./charts.js";
+import {
+  createSVGProgressBar,
+  formatBytes,
+  createXPBarChart,
+  createProjectsSVG,
+} from "./charts.js";
+
+// ── History API: Prevent back navigation after logout ──
+window.history.pushState(null, "", window.location.href);
+window.addEventListener("popstate", () => {
+  if (!localStorage.getItem("authToken")) {
+    window.location.replace("index.html");
+  } else {
+    window.history.pushState(null, "", window.location.href);
+  }
+});
 
 // ── Auth Guard ──
 
 if (!localStorage.getItem("authToken")) {
-  window.location.href = "index.html";
+  window.location.replace("index.html");
 }
 
 // ── Init ──
@@ -22,13 +37,14 @@ async function loadUserProfile() {
 
   if (!user?.id) {
     localStorage.removeItem("authToken");
-    window.location.href = "index.html";
+    window.location.replace("index.html");
     throw new Error("User not authenticated");
   }
 
   document.getElementById("nav-username").textContent = user.login;
   document.getElementById("username").textContent = user.login;
-  document.getElementById("name").textContent = user.firstName + " " + user.lastName;
+  document.getElementById("name").textContent =
+    user.firstName + " " + user.lastName;
   document.getElementById("email").textContent = user.email;
   document.getElementById("cpr").textContent = user.CPRnumber;
 
@@ -45,7 +61,11 @@ async function loadAuditData(userId) {
   document.getElementById("audit-progress-done").innerHTML =
     createSVGProgressBar(donePercent, formatBytes(audit.totalUp), "#10b981");
   document.getElementById("audit-progress-received").innerHTML =
-    createSVGProgressBar(receivedPercent, formatBytes(audit.totalDown), "#3b82f6");
+    createSVGProgressBar(
+      receivedPercent,
+      formatBytes(audit.totalDown),
+      "#3b82f6",
+    );
   document.getElementById("audit-ratio-value").textContent =
     audit.ratio.toFixed(2);
 }
@@ -84,7 +104,12 @@ function categorizeTransactions(transactions) {
     const path = tx.path || "";
     if (path.includes("bh-piscine")) result["bh-piscine"].push(tx);
     if (path.includes("piscine-js")) result["piscine-js"].push(tx);
-    if (path.includes("bh-module") && !path.includes("piscine-js") && !path.includes("checkpoint")) result["bh-module"].push(tx);
+    if (
+      path.includes("bh-module") &&
+      !path.includes("piscine-js") &&
+      !path.includes("checkpoint")
+    )
+      result["bh-module"].push(tx);
   }
 
   return result;
@@ -107,7 +132,9 @@ function setupProjectTabs(projectsByCategory) {
       tab.classList.remove("bg-slate-800", "text-slate-400");
       tab.classList.add("bg-blue-600", "text-white");
 
-      container.innerHTML = createProjectsSVG(projectsByCategory[tab.dataset.category]);
+      container.innerHTML = createProjectsSVG(
+        projectsByCategory[tab.dataset.category],
+      );
     });
   });
 }
@@ -115,6 +142,8 @@ function setupProjectTabs(projectsByCategory) {
 function setupSignout() {
   document.getElementById("signout").addEventListener("click", () => {
     localStorage.removeItem(config.authTokenKey);
-    window.location.href = "index.html";
+    // Replace current history entry so user can't navigate back to main page
+    window.history.replaceState(null, "", "index.html");
+    window.location.replace("index.html");
   });
 }

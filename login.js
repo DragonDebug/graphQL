@@ -1,5 +1,15 @@
 import { authenticate } from "./auth.js";
 
+// Prevent back navigation to login page after successful login
+window.history.pushState(null, "", window.location.href);
+window.addEventListener("popstate", () => {
+  if (localStorage.getItem("authToken")) {
+    window.location.replace("main.html");
+  } else {
+    window.history.pushState(null, "", window.location.href);
+  }
+});
+
 const feedbackEl = document.getElementById("feedback");
 
 document.getElementById("login-form").addEventListener("submit", async (e) => {
