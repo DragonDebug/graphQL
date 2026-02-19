@@ -23,13 +23,24 @@ function shortXP(xp) {
 // ── Progress Bar ──
 
 export function createSVGProgressBar(percent, value = "", color = "#3b82f6") {
-  const w = 490;
-  const filled = (w * Math.max(0, Math.min(100, percent))) / 100;
+  const totalWidth = 490;
 
-  return `<svg viewBox="0 0 ${w} 40" width="100%">
-    <rect x="0" y="15" width="${w}" height="20" rx="10" fill="#1e293b"/>
-    <rect x="0" y="15" width="${filled}" height="20" rx="10" fill="${color}"/>
-    <text x="${w - 10}" y="10" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="end">${value}</text>
+  // percent value between 0 and 100
+  let percentValue = percent;
+  if (percentValue < 0) percentValue = 0;
+  if (percentValue > 100) percentValue = 100;
+
+  let filledWidth = (totalWidth * percentValue) / 100;
+  let labelX = totalWidth - 10;
+
+  let background = `<rect x="0" y="15" width="${totalWidth}" height="20" rx="10" fill="#1e293b"/>`;
+  let filled = `<rect x="0" y="15" width="${filledWidth}" height="20" rx="10" fill="${color}"/>`;
+  let label = `<text x="${labelX}" y="10" font-size="12" font-weight="bold" fill="#94a3b8" text-anchor="end">${value}</text>`;
+
+  return `<svg viewBox="0 0 ${totalWidth} 40" width="100%">
+    ${background}
+    ${filled}
+    ${label}
   </svg>`;
 }
 
