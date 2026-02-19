@@ -1,6 +1,6 @@
 // ── Formatting ──
 
-export function formatBytes(bytes, decimals = 2) {
+export function formatBytes(bytes) {
   if (bytes === 0) return "0 Bytes";
   const k = 1000;
   const sizes = ["Bytes", "KB", "MB", "GB"];
@@ -8,16 +8,6 @@ export function formatBytes(bytes, decimals = 2) {
   // Always round to no decimals
   const rounded = Math.round(bytes / Math.pow(k, i));
   return rounded + " " + sizes[i];
-}
-
-export function formatXP(xp) {
-  return new Intl.NumberFormat("en-US").format(xp);
-}
-
-function shortXP(xp) {
-  if (xp >= 1_000_000) return (xp / 1_000_000).toFixed(1) + "M";
-  if (xp >= 1_000) return (xp / 1_000).toFixed(1) + "K";
-  return xp.toString();
 }
 
 // ── Progress Bar ──
@@ -82,7 +72,7 @@ export function createXPBarChart(monthlyData) {
 
     // XP value above the bar (only if non-zero)
     if (entry.totalXP > 0) {
-      svg += `<text x="${x}" y="${bottom - barH - 8}" text-anchor="middle" font-size="9" fill="#94a3b8">${shortXP(entry.totalXP)}</text>`;
+      svg += `<text x="${x}" y="${bottom - barH - 8}" text-anchor="middle" font-size="9" fill="#94a3b8">${formatBytes(entry.totalXP)}</text>`;
     }
   }
 
