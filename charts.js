@@ -1,12 +1,13 @@
 // ── Formatting ──
 
-export function formatBytes(bytes) {
+export function formatBytes(bytes, decimals = 0) {
   if (bytes === 0) return "0 Bytes";
   const k = 1000;
   const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  // Always round to no decimals
-  const rounded = Math.round(bytes / Math.pow(k, i));
+  
+  const factor = Math.pow(10, decimals);
+  const rounded = Math.round((bytes / Math.pow(k, i)) * factor) / factor;
   return rounded + " " + sizes[i];
 }
 

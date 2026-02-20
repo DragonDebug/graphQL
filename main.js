@@ -59,15 +59,15 @@ async function loadAuditData(userId) {
   const receivedPercent = (audit.totalDown / maxXP) * 100;
 
   document.getElementById("audit-progress-done").innerHTML =
-    createSVGProgressBar(donePercent, formatBytes(audit.totalUp), "#10b981");
+    createSVGProgressBar(donePercent, formatBytes(audit.totalUp,2), "#10b981");
   document.getElementById("audit-progress-received").innerHTML =
     createSVGProgressBar(
       receivedPercent,
-      formatBytes(audit.totalDown),
+      formatBytes(audit.totalDown, 2),
       "#3b82f6",
     );
   document.getElementById("audit-ratio-value").textContent =
-    audit.ratio.toFixed(2);
+    audit.ratio.toFixed(1);
 }
 
 async function loadXPAndProjects(userId) {
