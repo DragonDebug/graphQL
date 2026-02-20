@@ -40,44 +40,61 @@ export function createSVGProgressBar(percent, value = "", color = "#3b82f6") {
 export function createXPBarChart(monthlyData) {
   if (!monthlyData?.length) return "<p>No data</p>";
 
-  // Same container size as before
-  const colW = 80,
-    padL = 50,
-    padR = 30,
-    chartH = 220,
-    topPad = 40;
-  const bottom = topPad + chartH;
-  const svgW = padL + monthlyData.length * colW + padR;
-  const svgH = bottom + 50;
-  const maxXP = Math.max(...monthlyData.map((d) => d.totalXP));
+  // ── Layout constants ──
+  const columnWidth = 80;
+  const paddingLeft = 50;
+  const paddingRight = 30;
+  const chartHeight = 220;
+  const topPadding = 40;
 
-  let svg = "";
+  // ── Derived dimensions ──
+  const bottomY = topPadding + chartHeight;
+  const svgWidth =
+    paddingLeft + monthlyData.length * columnWidth + paddingRight;
+  const svgHeight = bottomY + 50;
 
-  // Baseline
-  svg += `<line x1="${padL}" y1="${bottom}" x2="${svgW - padR}" y2="${bottom}" stroke="#334155"/>`;
+  // ── Find the highest XP to scale bars against ──
+  const allXPValues = monthlyData.map((d) => d.totalXP);
+  const maxXP = Math.max(...allXPValues);
 
-  // Plot each month: bar + label
+  // ── Start building SVG content ──
+  let svgContent = "";
+
+  // Draw the horizontal baseline
+  svgContent += `<line x1="${paddingLeft}" y1="${bottomY}" x2="${svgWidth - paddingRight}" y2="${bottomY}" stroke="#334155"/>`;
+
+  // ── Draw each month's bar ──
   for (let i = 0; i < monthlyData.length; i++) {
     const entry = monthlyData[i];
-    const x = padL + i * colW;
-    const barH = maxXP > 0 ? (entry.totalXP / maxXP) * chartH : 0;
+    const centerX = paddingLeft + i * columnWidth;
 
-    // Solid vertical bar
-    svg += `<rect x="${x - 8}" y="${bottom - barH}" width="16" height="${barH}" rx="3" fill="#3b82f6"/>`;
-
-    // Month label (every 3rd + last)
-    if (i % 3 === 0 || i === monthlyData.length - 1) {
-      const [month, year] = entry.month.split(" ");
-      svg += `<text x="${x}" y="${bottom + 18}" text-anchor="middle" font-size="10" fill="#64748b">${month.slice(0, 3)} ${year.slice(2)}</text>`;
+    // Calculate bar height proportional to max XP
+    let barHeight = 0;
+    if (maxXP > 0) {
+      barHeight = (entry.totalXP / maxXP) * chartHeight;
     }
 
-    // XP value above the bar (only if non-zero)
+    // Draw the bar
+    const barX = centerX - 8;
+    const barY = bottomY - barHeight;
+    svgContent += `<rect x="${barX}" y="${barY}" width="16" height="${barHeight}" rx="3" fill="#3b82f6"/>`;
+
+    // Show month label for every month
+    const [month, year] = entry.month.split(" ");
+    const shortMonth = month.slice(0, 3);
+    const shortYear = year.slice(2);
+    const labelY = bottomY + 18;
+    svgContent += `<text x="${centerX}" y="${labelY}" text-anchor="middle" font-size="10" fill="#64748b">${shortMonth} ${shortYear}</text>`;
+
+    // Show XP value above the bar (skip if zero)
     if (entry.totalXP > 0) {
-      svg += `<text x="${x}" y="${bottom - barH - 8}" text-anchor="middle" font-size="9" fill="#94a3b8">${formatBytes(entry.totalXP)}</text>`;
+      const valueY = barY - 8;
+      const label = formatBytes(entry.totalXP);
+      svgContent += `<text x="${centerX}" y="${valueY}" text-anchor="middle" font-size="9" fill="#94a3b8">${label}</text>`;
     }
   }
 
-  return `<svg width="${svgW}" height="${svgH}">${svg}</svg>`;
+  return `<svg width="${svgWidth}" height="${svgHeight}">${svgContent}</svg>`;
 }
 
 // ── Projects Bar Chart ──
