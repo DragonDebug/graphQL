@@ -7,7 +7,8 @@ import {
   createProjectsSVG,
 } from "./charts.js";
 
-// ── History API: Prevent back navigation after logout ──
+// Replace current entry so login page is removed from history stack
+window.history.replaceState(null, "", window.location.href);
 window.history.pushState(null, "", window.location.href);
 window.addEventListener("popstate", () => {
   if (!localStorage.getItem("authToken")) {
@@ -18,20 +19,17 @@ window.addEventListener("popstate", () => {
 });
 
 // ── Auth Guard ──
-
 if (!localStorage.getItem("authToken")) {
   window.location.replace("index.html");
 }
 
 // ── Init ──
-
 setupSignout();
 const userId = await loadUserProfile();
 await loadAuditData(userId);
 await loadXPAndProjects(userId);
 
 // ── Data Loading ──
-
 async function loadUserProfile() {
   const user = await api.getUserLoginInfo();
 
@@ -59,7 +57,7 @@ async function loadAuditData(userId) {
   const receivedPercent = (audit.totalDown / maxXP) * 100;
 
   document.getElementById("audit-progress-done").innerHTML =
-    createSVGProgressBar(donePercent, formatBytes(audit.totalUp,2), "#10b981");
+    createSVGProgressBar(donePercent, formatBytes(audit.totalUp, 2), "#10b981");
   document.getElementById("audit-progress-received").innerHTML =
     createSVGProgressBar(
       receivedPercent,

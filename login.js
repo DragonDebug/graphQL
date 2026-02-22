@@ -2,18 +2,9 @@ import { authenticate } from "./auth.js";
 
 // If already authenticated, redirect to dashboard immediately
 if (localStorage.getItem("authToken")) {
+  window.history.replaceState(null, "", "main.html");
   window.location.replace("main.html");
 }
-
-// Prevent back navigation to login page after successful login
-window.history.pushState(null, "", window.location.href);
-window.addEventListener("popstate", () => {
-  if (localStorage.getItem("authToken")) {
-    window.location.replace("main.html");
-  } else {
-    window.history.pushState(null, "", window.location.href);
-  }
-});
 
 const feedbackEl = document.getElementById("feedback");
 
