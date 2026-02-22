@@ -1,5 +1,10 @@
 import { authenticate } from "./auth.js";
 
+// If already authenticated, redirect to dashboard immediately
+if (localStorage.getItem("authToken")) {
+  window.location.replace("main.html");
+}
+
 // Prevent back navigation to login page after successful login
 window.history.pushState(null, "", window.location.href);
 window.addEventListener("popstate", () => {
