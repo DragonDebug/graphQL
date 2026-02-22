@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GraphQL - Sign In</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    if (localStorage.getItem("authToken")) {
+      window.location.replace("main.html");
+    }
+  </script>
 </head>
 <body class="min-h-screen flex items-center justify-center bg-slate-950">
 

@@ -1,11 +1,5 @@
 import { authenticate } from "./auth.js";
 
-// If already authenticated, redirect to dashboard immediately
-if (localStorage.getItem("authToken")) {
-  window.history.replaceState(null, "", "main.html");
-  window.location.replace("main.html");
-}
-
 const feedbackEl = document.getElementById("feedback");
 
 document.getElementById("login-form").addEventListener("submit", async (e) => {
