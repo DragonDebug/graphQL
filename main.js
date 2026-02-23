@@ -26,13 +26,20 @@ function redirectToLogin() {
 
 // ── Init ──
 setupSignout();
-const userId = await loadUserProfile();
 
-if (!userId) {
+try {
+  const userId = await loadUserProfile();
+  console.log("Logged in user ID:", userId);
+
+  if (!userId) {
+    redirectToLogin();
+  } else {
+    await loadAuditData(userId);
+    await loadXPAndProjects(userId);
+  }
+} catch (err) {
+  console.error("Auth/init failed:", err);
   redirectToLogin();
-} else {
-  await loadAuditData(userId);
-  await loadXPAndProjects(userId);
 }
 
 // ── Data Loading ──
