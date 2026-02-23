@@ -7,9 +7,8 @@ import {
   createProjectsSVG,
 } from "./charts.js";
 
-// Replace current entry so login page is removed from history stack
+// ── History guard: prevent back-button to main after sign-out ──
 window.history.replaceState(null, "", window.location.href);
-window.history.pushState(null, "", window.location.href);
 window.addEventListener("popstate", () => {
   if (!localStorage.getItem("authToken")) {
     window.location.replace("index.html");
@@ -18,26 +17,29 @@ window.addEventListener("popstate", () => {
   }
 });
 
-// ── Auth Guard ──
-if (!localStorage.getItem("authToken")) {
+// ── Redirect helper ──
+function redirectToLogin() {
+  localStorage.removeItem(config.authTokenKey);
+  window.history.replaceState(null, "", "index.html");
   window.location.replace("index.html");
 }
 
 // ── Init ──
 setupSignout();
 const userId = await loadUserProfile();
-await loadAuditData(userId);
-await loadXPAndProjects(userId);
+
+if (!userId) {
+  redirectToLogin();
+} else {
+  await loadAuditData(userId);
+  await loadXPAndProjects(userId);
+}
 
 // ── Data Loading ──
 async function loadUserProfile() {
   const user = await api.getUserLoginInfo();
 
-  if (!user?.id) {
-    localStorage.removeItem("authToken");
-    window.location.replace("index.html");
-    throw new Error("User not authenticated");
-  }
+  if (!user?.id) return null;
 
   document.getElementById("nav-username").textContent = user.login;
   document.getElementById("username").textContent = user.login;
@@ -139,9 +141,6 @@ function setupProjectTabs(projectsByCategory) {
 
 function setupSignout() {
   document.getElementById("signout").addEventListener("click", () => {
-    localStorage.removeItem(config.authTokenKey);
-    // Replace current history entry so user can't navigate back to main page
-    window.history.replaceState(null, "", "index.html");
-    window.location.replace("index.html");
+    redirectToLogin();
   });
 }
