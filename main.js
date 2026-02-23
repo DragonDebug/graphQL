@@ -36,6 +36,7 @@ try {
   } else {
     await loadAuditData(userId);
     await loadXPAndProjects(userId);
+    document.body.classList.remove("opacity-0");
   }
 } catch (err) {
   console.error("Auth/init failed:", err);
