@@ -1,22 +1,7 @@
-// ── Formatting ──
-
-export function formatBytes(bytes, decimals = 0) {
-  if (bytes === 0) return "0 Bytes";
-  const k = 1000;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  
-  const factor = Math.pow(10, decimals);
-  const rounded = Math.round((bytes / Math.pow(k, i)) * factor) / factor;
-  return rounded + " " + sizes[i];
-}
-
 // ── Progress Bar ──
-
 export function createSVGProgressBar(percent, value = "", color = "#3b82f6") {
   const totalWidth = 490;
 
-  // percent value between 0 and 100
   let percentValue = percent;
   if (percentValue < 0) percentValue = 0;
   if (percentValue > 100) percentValue = 100;
@@ -36,7 +21,6 @@ export function createSVGProgressBar(percent, value = "", color = "#3b82f6") {
 }
 
 // ── XP Line Chart ──
-
 export function createXPBarChart(monthlyData) {
   if (!monthlyData?.length) return "<p>No data</p>";
 
@@ -53,14 +37,12 @@ export function createXPBarChart(monthlyData) {
     paddingLeft + monthlyData.length * columnWidth + paddingRight;
   const svgHeight = bottomY + 50;
 
-  // ── Find the highest XP to scale bars against ──
   const allXPValues = monthlyData.map((d) => d.totalXP);
   const maxXP = Math.max(...allXPValues);
 
-  // ── Start building SVG content ──
   let svgContent = "";
 
-  // Draw the horizontal baseline
+  // Horizontal baseline
   svgContent += `<line x1="${paddingLeft}" y1="${bottomY}" x2="${svgWidth - paddingRight}" y2="${bottomY}" stroke="#334155"/>`;
 
   // ── Draw each month's bar ──
@@ -68,13 +50,11 @@ export function createXPBarChart(monthlyData) {
     const entry = monthlyData[i];
     const centerX = paddingLeft + i * columnWidth;
 
-    // Calculate bar height proportional to max XP
     let barHeight = 0;
     if (maxXP > 0) {
       barHeight = (entry.totalXP / maxXP) * chartHeight;
     }
 
-    // Draw the bar
     const barX = centerX - 8;
     const barY = bottomY - barHeight;
     svgContent += `<rect x="${barX}" y="${barY}" width="16" height="${barHeight}" rx="3" fill="#3b82f6"/>`;
@@ -86,7 +66,6 @@ export function createXPBarChart(monthlyData) {
     const labelY = bottomY + 18;
     svgContent += `<text x="${centerX}" y="${labelY}" text-anchor="middle" font-size="10" fill="#64748b">${shortMonth} ${shortYear}</text>`;
 
-    // Show XP value above the bar (skip if zero)
     if (entry.totalXP > 0) {
       const valueY = barY - 8;
       const label = formatBytes(entry.totalXP);
@@ -98,7 +77,6 @@ export function createXPBarChart(monthlyData) {
 }
 
 // ── Projects Bar Chart ──
-
 export function createProjectsSVG(projects) {
   if (!projects?.length) return "<p>No projects</p>";
 
@@ -121,4 +99,16 @@ export function createProjectsSVG(projects) {
   }
 
   return `<svg width="${svgW}" height="${svgH}">${svg}</svg>`;
+}
+
+// ── Formatting ──
+export function formatBytes(bytes, decimals = 0) {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1000;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  
+  const factor = Math.pow(10, decimals);
+  const rounded = Math.round((bytes / Math.pow(k, i)) * factor) / factor;
+  return rounded + " " + sizes[i];
 }

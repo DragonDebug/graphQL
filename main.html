@@ -6,7 +6,6 @@
   <title>Dashboard</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // Block rendering immediately if no token exists
     if (!localStorage.getItem("authToken")) {
       window.location.replace("index.html");
     }

@@ -1,9 +1,5 @@
 import { config } from "./config.js";
 
-/**
- * Exchanges username/password for a Bearer token via Basic Auth.
- * Stores the token in localStorage on success.
- */
 export async function authenticate(username, password) {
   const response = await fetch(config.authEndpoint, {
     method: "POST",

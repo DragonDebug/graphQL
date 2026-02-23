@@ -1,8 +1,6 @@
 import { fetchGraphQL } from "./graphql.js";
 import * as queries from "./queries.js";
 
-// ── User ──
-
 export async function getUserLoginInfo() {
   const data = await fetchGraphQL(queries.GET_USER_LOGIN_INFO);
   const user = data.user?.[0];
@@ -19,8 +17,6 @@ export async function getUserLoginInfo() {
   };
 }
 
-// ── Audit Ratio ──
-
 export async function getAuditRatio(userId) {
   const data = await fetchGraphQL(queries.GET_AUDIT_RATIO, { userId });
   const user = data.user[0] || {};
@@ -32,8 +28,6 @@ export async function getAuditRatio(userId) {
   };
 }
 
-// ── XP Transactions ──
-
 export async function getXPTransactions(userId) {
   const data = await fetchGraphQL(queries.GET_XP_TRANSACTIONS, { userId });
   const transactions = data.transaction || [];
@@ -44,9 +38,6 @@ export async function getXPTransactions(userId) {
   };
 }
 
-/**
- * Groups transactions by project name, sums XP, sorts highest first.
- */
 export function getFinishedProjects(transactions) {
   const totals = {};
 
@@ -61,10 +52,6 @@ export function getFinishedProjects(transactions) {
 }
 
 // ── Helpers ──
-
-/**
- * Groups transactions into monthly totals, filling gaps with 0.
- */
 function groupByMonth(transactions) {
   if (transactions.length === 0) return [];
 

@@ -1,9 +1,5 @@
 import { config } from "./config.js";
 
-/**
- * Sends a GraphQL query to the API and returns the data.
- * Automatically attaches the auth token from localStorage.
- */
 export async function fetchGraphQL(query, variables = {}) {
   const token = localStorage
     .getItem(config.authTokenKey)

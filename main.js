@@ -7,7 +7,7 @@ import {
   createProjectsSVG,
 } from "./charts.js";
 
-// ── History guard: prevent back-button to main after sign-out ──
+// ── prevent back-button to main after sign-out ──
 window.history.replaceState(null, "", window.location.href);
 window.addEventListener("popstate", () => {
   if (!localStorage.getItem("authToken")) {
@@ -83,7 +83,6 @@ async function loadXPAndProjects(userId) {
 
   console.log("XP Transactions:", transactions);
 
-  // XP over time chart
   document.getElementById("xp-chart").innerHTML = createXPBarChart(byMonth);
 
   // Categorize and display projects in tabs
@@ -98,13 +97,6 @@ async function loadXPAndProjects(userId) {
 }
 
 // ── Helpers ──
-
-/**
- * Splits transactions into 3 categories based on path.
- * - bh-piscine: path contains "bh-piscine"
- * - piscine-js: path contains "piscine-js" (even under bh-module)
- * - bh-module: path contains "bh-module" but NOT "piscine-js"
- */
 function categorizeTransactions(transactions) {
   const result = { "bh-piscine": [], "piscine-js": [], "bh-module": [] };
 
@@ -127,12 +119,10 @@ function setupProjectTabs(projectsByCategory) {
   const tabs = document.querySelectorAll(".project-tab");
   const container = document.getElementById("projects-chart");
 
-  // Show first tab by default
   container.innerHTML = createProjectsSVG(projectsByCategory["bh-piscine"]);
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      // Toggle active tab styling
       tabs.forEach((t) => {
         t.classList.remove("bg-blue-600", "text-white");
         t.classList.add("bg-slate-800", "text-slate-400");
